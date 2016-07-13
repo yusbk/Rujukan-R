@@ -2,20 +2,20 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org9c7a8e9">1. ggplot2</a>
+<li><a href="#orge1fd3be">1. ggplot2</a>
 <ul>
-<li><a href="#orgabf0151">1.1. Label</a></li>
+<li><a href="#org305847f">1.1. Label</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-# ggplot2<a id="org9c7a8e9"></a>
+# ggplot2<a id="orge1fd3be"></a>
 
 Pelbagai rujukan berkaitan dengan `ggplot2`
 
-## Label<a id="orgabf0151"></a>
+## Label<a id="org305847f"></a>
 
 Untuk tukarkan warna guna `color` (elakkan `fill`) di aesthetic kemudian tetapkan
 warna dengan `scale_color_manual`
@@ -24,3 +24,31 @@ warna dengan `scale_color_manual`
     ggplot(mtcars, aes(x=mpg, y=hp, col=as.factor(cyl))) +
       geom_point() +
       scale_color_manual(values=myColors)
+
+Guna mapping untuk tambahkan legend yang dibuat secara manual
+
+    library(ggplot2)
+    df = data.frame(error = c(0.0832544999, 0.0226680026, 0.0082536264, 0.0049199958, 0.0003917755, 0.0003859976, 0.0003888253, 0.0003953918, 0.0003958398), sDev = c(8.188111e-03, 2.976161e-03, 1.466221e-03, 2.141425e-03, 2.126976e-05, 2.139364e-05, 2.169059e-05, 2.629895e-05, 2.745938e-05))
+
+    minimum <- 6
+    best.model <- 5
+
+    ggplot(df, aes(x=1:length(error), y=error)) +
+        scale_x_continuous(breaks = seq_along(df$error)) +
+        geom_point(size = 3) +
+        geom_line() +
+        geom_errorbar(data = df, aes(x = 1:length(error), ymin = error - sDev, ymax = error + sDev),
+                      width = 0.1) +
+        geom_hline(data = df, aes(yintercept = error[minimum] + sDev[minimum], linetype="a", colour="a")) +
+        geom_vline(data= data.frame(type="b", col="b", minimum=minimum),
+                   aes(linetype=type, colour=col, xintercept = minimum), size = 1, show.legend = TRUE) +
+        geom_vline(data= data.frame(type="b", col="b", best.model=best.model),
+                   aes(linetype="c", colour="c", xintercept = best.model), size = 1, show.legend = TRUE) +
+        scale_colour_manual(name="Legend", values = c("a" = "black", "b" = "red", "c" = "blue")) +
+        scale_linetype_manual(name="Legend", values = c("a" = "dashed", "b" = "dotted", "c" = "dotted")) +
+        theme_gray(base_size = 18) +
+        theme(axis.text = element_text(color = "black"),
+              legend.key.height  = grid::unit(0.1, "npc")) +
+        labs(x = "# of parameters", fontface = "bold") +
+        labs(y = "CV error") +
+        labs(title = "Cross-validation error curve")
