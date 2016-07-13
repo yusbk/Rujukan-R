@@ -1,0 +1,13 @@
+
+* ggplot2
+Pelbagai rujukan berkaitan dengan =ggplot2=
+** Label
+Untuk tukarkan warna guna =color= (elakkan =fill=) di aesthetic kemudian tetapkan
+warna dengan =scale_color_manual=
+
+#+BEGIN_SRC R
+  myColors <- c("#56ddc5", "#ff3db7", "#4699dd")
+  ggplot(mtcars, aes(x=mpg, y=hp, col=as.factor(cyl))) +
+    geom_point() +
+    scale_color_manual(values=myColors)
+#+END_SRC
