@@ -42,3 +42,16 @@ Guna mapping untuk tambahkan legend yang dibuat secara manual
       labs(title = "Cross-validation error curve")
 
 #+END_SRC
+** Susunan tetap
+
+Untuk pastikan susunan tidak terbalik pakai di kod =ggplot2=
+
+#+BEGIN_EXAMPLE
+  scale_x_discrete(limit = rev(levels(df$var)))
+#+END_EXAMPLE
+
+Atau pastikan susunan ditetapkan sebagai /ordered list/ di data.frame
+
+#+BEGIN_EXAMPLE
+  df$var <- factor(df$var, levels = df$var)
+#+END_EXAMPLE

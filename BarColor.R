@@ -34,18 +34,19 @@ plot.sale.bad2 <- ggplot(data=df.sale, aes(x=area, y=sale, fill=area)) +
 plot.sale.bad2
 
 
-#### Bar color 2
+#### Bar color 2 with Norge
 set.seed(34521)
 RegData1 <- mtcars[sample(nrow(mtcars), 10),]
 RegData <- dplyr::sample_n(mtcars, 10)
 
-## Give column name
-RegData1$navn <- rownames(RegData1)
-RegData <- tibble::rownames_to_column(RegData, "navn")
+##### Give column name
+##RegData1$navn <- rownames(RegData1) #create colomn "navn"
+RegData <- tibble::rownames_to_column(RegData, "navn") #other way to create rownames ie. better way!
 
 ggplot(RegData, aes(navn, mpg)) + geom_bar(stat = 'identity') + coord_flip()
-## reorder høyst på toppen
-plot1 <- ggplot(RegData, aes(x=reorder(navn, mpg), y=mpg))
+
+plot1 <- ggplot(RegData, aes(x=reorder(navn, mpg), y=mpg)) #reorder høyst er på toppen
+
 plot2 <- plot1 + geom_bar(stat = "identity", aes(fill = navn == 'Merc 280')) +
     # y = mpg + 1.3 for adjusting text position
     geom_text(aes(y = mpg + 1.3, label=paste0(mpg, '%'))) +
@@ -55,6 +56,9 @@ plot2 <- plot1 + geom_bar(stat = "identity", aes(fill = navn == 'Merc 280')) +
     coord_flip()
 
 plot2
+
+### include table -- testing different ways
+library(gridExtra)
 rn <- RegData[,c(1,3)]
 grn <- tableGrob(rn, rows = NULL)
 grn$widths = unit(rep(1/ncol(grn), ncol(grn)), "npc")
@@ -78,6 +82,7 @@ qplot(colnames(iris), geom="bar")+ theme_bw() +
     annotation_custom(ymin=1, ymax=2, xmin=-Inf, xmax=Inf, tg)
 
 
+############################
 #### Table and plot
 
 library(grid)
