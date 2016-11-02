@@ -1,5 +1,8 @@
 #+TITLE: Rujukan untuk buat laporan
 
+Dokument ini menggandungi pelbagai cara penggunaan R untuk menghasilkan pelbagai
+grafik yang dikumpul dari pembacaan di lamanmaya dan percobaan sendiri
+
 * Bar histogram berlainan warna
 
 Buat histogram dan beri warna lain di bar tertentu untuk penekanan terutama untuk
