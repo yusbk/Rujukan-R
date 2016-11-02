@@ -55,13 +55,12 @@ Cara asas yang digunakan untuk mendapatkan cara terbaik di atas.
   colnames(df.sale) <- c("Penduduk", "Jumlah keseluruhan")
 
   ## opt 1
-  library(gridExtra)
   area.color <- c(NA, "withcolor", NA, NA)
   plot.sale.bad1 <- ggplot(data=df.sale, aes(x=area, y=sale, fill=area.color)) +
     geom_bar(stat="identity") +
     xlab(colnames(df.sale)[1]) +
     ylab(colnames(df.sale)[2]) +
-    ggtitle("Taburan penduduk")
+      ggtitle("Taburan penduduk")
   plot.sale.bad1
 
   ## opt 2
@@ -73,4 +72,92 @@ Cara asas yang digunakan untuk mendapatkan cara terbaik di atas.
     ylab(colnames(df.sale)[2]) +
     ggtitle("Taburan penduduk")
   plot.sale.bad2
+
+#+END_SRC
+* Selaraskan lebih dari satu plan
+Ini ialah cara untuk selaraskan pelbagai plan samada selaraskan ukuran atau axis plot
+** Perkongsian x-axis bila y-axis berbeza
+Menyelaraskan plot-plot yang berkongsi x-axis tetapi y-axis yang berlainan. Selalunya
+penyelarasan tidak berlaku secara automatik kerana perbezaan plot margin. Penggunaan
+=tidyr::gather()= kemudian =facet_grid()= dari ggplot2 menghalang penggunaan y-axis
+yang berbeza. =facet_grid()= dan =facet_wrap()= diguna untuk pelbagai plot sekiranya
+x dan y axis dikongsikan. Walaupun =facet_= boleh meggunakan skala yang berbeza
+dengan ~scale="free"~, cara ini tidak tepat untuk menggunakan y-axis yang
+berbeza. Oleh itu penyelesaian menggunakkan *grid package* =grid.draw()=,=rbind()=
+dan =ggplotGrob()= adalah disarankan.
+*** Cara 1
+Menggunakan =rbind=
+#+BEGIN_SRC R
+  rm(list=ls())
+  library(ggplot2)
+  library(grid)
+  library(dplyr)
+  library(lubridate)
+
+  #' Create some data to play with. Two time series with the same timestamp.
+  df <- data.frame(DateTime = lubridate::ymd("2010-07-01") + c(0:8760) * hours(2), series1 = rnorm(8761), series2 = rnorm(8761, 100))
+
+  #' Create the two plots.
+  plot1 <- df %>%
+    select(DateTime, series1) %>%
+    na.omit() %>%
+    ggplot() +
+    geom_point(aes(x = DateTime, y = series1), size = 0.5, alpha = 0.75) +
+    ylab("Red dots / m") +
+    theme_minimal() +
+    theme(axis.title.x = element_blank())
+
+  plot2 <- df %>%
+    select(DateTime, series2) %>%
+    na.omit() %>%
+    ggplot() +
+    geom_point(aes(x = DateTime, y = series2), size = 0.5, alpha = 0.75) +
+    ylab("Blue drops / L") +
+    theme_minimal() +
+    theme(axis.title.x = element_blank())
+
+  grid.newpage()
+  grid.draw(rbind(ggplotGrob(plot1), ggplotGrob(plot2), size = "last"))
+
+#+END_SRC
+*** Cara 2
+Menggunakan =grid::unit.pmax=
+
+#+BEGIN_SRC R
+  ##create data
+  data <- data.frame(x = seq(0, 100, 1))
+  data = transform(data,
+                    y1 = sin(x * pi / 10),
+                    y2 = x**2
+                   )
+
+  ##load libraries
+  library(ggplot2)
+  library(gridExtra)
+
+  ##generate plots, can combine with facetting but not align
+  p11 <- ggplot(data, aes(x = x)) + geom_line(aes(y = y1))
+  p22 <- ggplot(data, aes(x = x)) + geom_bar(aes(y = y2), stat = "identity")
+
+  grid.arrange(p11, p22)#combined but not align
+
+  ## to align, covert first to gtable
+  p1 <- ggplot_gtable(ggplot_build(p11))
+  p2 <- ggplot_gtable(ggplot_build(p22))
+  ##or using ggplotGrob to get the gtable
+  p111 <- ggplot2::ggplotGrob(p11)
+  p222 <- ggplot2::ggplotGrob(p22)
+
+  grid.arrange(p111,p222) #not align
+
+  ##find widths of each plot and calculate maximum and apply to each to get uniform layout to each
+  maxWidth = grid::unit.pmax(p1$widths[2:3], p2$widths[2:3])
+
+  p1$widths[2:3] <- maxWidth
+  p2$widths[2:3] <- maxWidth
+
+  ##draw final product
+  gridExtra::grid.arrange(p1, p2, heights = c(3, 2))
+  ##alternativ
+  grid::grid.draw(rbind(p111, p222))
 #+END_SRC
