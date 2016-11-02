@@ -1,0 +1,73 @@
+#+TITLE: Rujukan untuk buat laporan
+
+* Bar histogram berlainan warna
+
+Buat histogram dan beri warna lain di bar tertentu untuk penekanan terutama untuk
+perbandingan dengan data keseluruahan
+** Cara terbaik
+Ini ialah cara terbaik gabungan dari cara-cara asas di bawah. Untuk pemahaman asas sila rujuk cara asas.
+#+BEGIN_SRC R
+  set.seed(34521)
+  RegData1 <- mtcars[sample(nrow(mtcars), 10),]
+  RegData <- dplyr::sample_n(mtcars, 10)
+
+  ##### Give column name
+  ##RegData1$navn <- rownames(RegData1) #create colomn "navn"
+  RegData <- tibble::rownames_to_column(RegData, "navn") #other way to create rownames ie. better way!
+
+  ggplot(RegData, aes(navn, mpg)) + geom_bar(stat = 'identity') + coord_flip()
+
+  plot1 <- ggplot(RegData, aes(x=reorder(navn, mpg), y=mpg)) #reorder høyst er på toppen
+
+  plot2 <- plot1 + geom_bar(stat = "identity", aes(fill = navn == 'Merc 280')) +
+      # y = mpg + 1.3 for adjusting text position
+      geom_text(aes(y = mpg + 1.3, label=paste0(mpg, '%'))) +
+      scale_fill_manual(values = c('lightblue', 'darkblue'), guide = 'none') +
+      scale_x_discrete(expand=c(0,0)) + #ingen border dvs begynner fra null
+      scale_y_continuous(limits = c(0,30), expand=c(0,0)) + # samme
+      coord_flip()
+
+  plot2
+#+END_SRC
+** Cara asas
+Cara asas yang digunakan untuk medapatkan cara terbaik di atas.
+
+#+BEGIN_SRC R
+  library(dplyr)
+  library(ggplot2)
+
+  ##### Bar color cara 1
+  mt_mean <-   mtcars %>% group_by(cyl) %>% summarise(avg_mpg = mean(mpg) )
+
+  g <- ggplot( mt_mean , aes(x=factor(cyl), y =avg_mpg)) +
+      geom_bar(stat = 'identity', aes(fill = avg_mpg > 25 )  )
+
+  g2 <- g + scale_fill_manual(values = c('red', 'black'), guide="none" )
+
+
+  #### Bar color cara 2
+  area <- c("Tawau", "Sandakan", "Semporna", "Kunak")
+  sale <- c(16.5, 13.5, 14, 13)
+  df.sale <- data.frame(area, sale)
+  colnames(df.sale) <- c("Penduduk", "Jumlah keseluruhan")
+
+  ## opt 1
+  library(gridExtra)
+  area.color <- c(NA, "withcolor", NA, NA)
+  plot.sale.bad1 <- ggplot(data=df.sale, aes(x=area, y=sale, fill=area.color)) +
+    geom_bar(stat="identity") +
+    xlab(colnames(df.sale)[1]) +
+    ylab(colnames(df.sale)[2]) +
+    ggtitle("Taburan penduduk")
+  plot.sale.bad1
+
+  ## opt 2
+
+  plot.sale.bad2 <- ggplot(data=df.sale, aes(x=area, y=sale, fill=area)) +
+    geom_bar(stat="identity") +
+    scale_fill_manual(values=c("grey50", "red", "grey50", "grey50")) +
+    xlab(colnames(df.sale)[1]) +
+    ylab(colnames(df.sale)[2]) +
+    ggtitle("Taburan penduduk")
+  plot.sale.bad2
+#+END_SRC

@@ -1,3 +1,6 @@
+library(dplyr)
+library(ggplot2)
+
 mt_mean <-   mtcars %>% group_by(cyl) %>% summarise(avg_mpg = mean(mpg) )
 
 g <- ggplot( mt_mean , aes(x=factor(cyl), y =avg_mpg)) +
