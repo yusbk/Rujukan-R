@@ -33,7 +33,7 @@ Ini ialah cara terbaik gabungan dari cara-cara asas di bawah. Untuk pemahaman as
   plot2
 #+END_SRC
 ** Cara asas
-Cara asas yang digunakan untuk medapatkan cara terbaik di atas.
+Cara asas yang digunakan untuk mendapatkan cara terbaik di atas.
 
 #+BEGIN_SRC R
   library(dplyr)
