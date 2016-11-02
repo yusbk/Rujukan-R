@@ -74,7 +74,7 @@ Cara asas yang digunakan untuk mendapatkan cara terbaik di atas.
   plot.sale.bad2
 
 #+END_SRC
-* Selaraskan lebih dari satu plan
+* Selaraskan lebih dari satu plot
 Ini ialah cara untuk selaraskan pelbagai plan samada selaraskan ukuran atau axis plot
 ** Perkongsian x-axis bila y-axis berbeza
 Menyelaraskan plot-plot yang berkongsi x-axis tetapi y-axis yang berlainan. Selalunya
