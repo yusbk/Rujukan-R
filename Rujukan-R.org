@@ -86,7 +86,7 @@ dengan ~scale="free"~, cara ini tidak tepat untuk menggunakan y-axis yang
 berbeza. Oleh itu penyelesaian menggunakkan *grid package* =grid.draw()=,=rbind()=
 dan =ggplotGrob()= adalah disarankan.
 *** Cara 1
-Menggunakan =rbind=
+Menggunakan =rbind=. Rujukan di [[https://gist.github.com/tomhopper/faa24797bb44addeba79][Gist]]
 #+BEGIN_SRC R
   rm(list=ls())
   library(ggplot2)
@@ -160,4 +160,63 @@ Menggunakan =grid::unit.pmax=
   gridExtra::grid.arrange(p1, p2, heights = c(3, 2))
   ##alternativ
   grid::grid.draw(rbind(p111, p222))
+#+END_SRC
+** Perkongsian y-axis bila x-axis berbeza
+Ini ialah contoh untuk menggabungkan pelbagai plot bila x-axis berbeza tetapi berkongsi y-axis. [[http://stackoverflow.com/questions/14743060/r-ggplot-graphs-sharing-the-same-y-axis-but-with-different-x-axis-scales][Stackoverflow]]
+
+#+BEGIN_SRC R
+  rm(list=ls())
+
+  ## Data
+  set.seed(1)
+  lambda <- 1.5
+  a <- 1
+  pareto <- rpareto(1000,lambda=lambda,a=a)
+  x_pareto <- seq(from=min(pareto),to=max(pareto),length=1000)
+  y_pareto <- 1-ppareto(x_pareto,lambda,a)
+  df1 <- data.frame(x=x_pareto,cdf=y_pareto)
+
+  ## Plot
+  library(PtProcess)
+  library(ggplot2)
+  library(gtable)
+  library(grid)
+  library(gridExtra)
+
+  ## Dua plot
+
+  p1 <- ggplot(df1,aes(x=x,y=cdf)) + geom_line() + scale_x_log10() +
+        theme(plot.margin = unit(c(0,-.5,0,.5), "lines"),
+              plot.background = element_blank()) +
+        ggtitle("pareto")
+  p2 <- ggplot(df2,aes(x=x,y=cdf)) + geom_line() +
+        theme(axis.text.y = element_blank(),
+              axis.ticks.y = element_blank(),
+              axis.title.y = element_blank(),
+              plot.margin = unit(c(0,1,0,-1), "lines"),
+              plot.background = element_blank()) +
+        ggtitle("norm")
+
+  gt1 <- ggplotGrob(p1)
+  gt2 <- ggplotGrob(p2)
+
+  newWidth = unit.pmax(gt1$widths[2:3], gt2$widths[2:3])
+
+  gt1$widths[2:3] = as.list(newWidth)
+  gt2$widths[2:3] = as.list(newWidth)
+
+  grid.arrange(gt1, gt2, ncol=2)
+
+  ## lebih dari dua plot guna gTable
+
+  ## New gtable with space for the three plots plus a right-hand margin
+  gt = gtable(widths = unit(c(1, 1, 1, .3), "null"), height = unit(1, "null"))
+
+  ## Instert gt1, gt2 and gt2 into the new gtable
+  gt <- gtable_add_grob(gt, gt1, 1, 1)
+  gt <- gtable_add_grob(gt, gt2, 1, 2)
+  gt <- gtable_add_grob(gt, gt2, 1, 3)
+
+  grid.newpage()
+  grid.draw(gt)
 #+END_SRC
