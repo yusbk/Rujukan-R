@@ -166,6 +166,11 @@ Ini ialah contoh untuk menggabungkan pelbagai plot bila x-axis berbeza tetapi be
 
 #+BEGIN_SRC R
   rm(list=ls())
+  library(PtProcess)
+  library(ggplot2)
+  library(gtable)
+  library(grid)
+  library(gridExtra)
 
   ## Data
   set.seed(1)
@@ -176,19 +181,21 @@ Ini ialah contoh untuk menggabungkan pelbagai plot bila x-axis berbeza tetapi be
   y_pareto <- 1-ppareto(x_pareto,lambda,a)
   df1 <- data.frame(x=x_pareto,cdf=y_pareto)
 
-  ## Plot
-  library(PtProcess)
-  library(ggplot2)
-  library(gtable)
-  library(grid)
-  library(gridExtra)
+  set.seed(1)
+  mean <- 3
+  norm <- rnorm(1000,mean=mean)
+  x_norm <- seq(from=min(norm),to=max(norm),length=1000)
+  y_norm <- pnorm(x_norm,mean=mean)
+  df2 <- data.frame(x=x_norm,cdf=y_norm)
 
+  ## Plot ###
   ## Dua plot
 
   p1 <- ggplot(df1,aes(x=x,y=cdf)) + geom_line() + scale_x_log10() +
         theme(plot.margin = unit(c(0,-.5,0,.5), "lines"),
               plot.background = element_blank()) +
         ggtitle("pareto")
+
   p2 <- ggplot(df2,aes(x=x,y=cdf)) + geom_line() +
         theme(axis.text.y = element_blank(),
               axis.ticks.y = element_blank(),
@@ -211,6 +218,7 @@ Ini ialah contoh untuk menggabungkan pelbagai plot bila x-axis berbeza tetapi be
 
   ## New gtable with space for the three plots plus a right-hand margin
   gt = gtable(widths = unit(c(1, 1, 1, .3), "null"), height = unit(1, "null"))
+  gtable_show_layout(gt) #utk tengok layout
 
   ## Instert gt1, gt2 and gt2 into the new gtable
   gt <- gtable_add_grob(gt, gt1, 1, 1)
