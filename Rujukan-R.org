@@ -75,7 +75,7 @@ Cara asas yang digunakan untuk mendapatkan cara terbaik di atas.
 
 #+END_SRC
 * Selaraskan lebih dari satu plot
-Ini ialah cara untuk selaraskan pelbagai plan samada selaraskan ukuran atau axis plot
+Ini ialah cara untuk selaraskan pelbagai plot samada selaraskan ukuran atau axis plot
 ** Perkongsian x-axis bila y-axis berbeza
 Menyelaraskan plot-plot yang berkongsi x-axis tetapi y-axis yang berlainan. Selalunya
 penyelarasan tidak berlaku secara automatik kerana perbezaan plot margin. Penggunaan
