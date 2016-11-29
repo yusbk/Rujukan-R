@@ -1,0 +1,20 @@
+#+Title: Aturcara utk R
+#+options: :toc nil :author nil :date nil
+
+* Guna huruf2 istimewa
+Utk menggunakan huruf-huruf instimewa seperti æ, ø atau å boleh larikan
+
+#+BEGIN_EXAMPLE
+Sys.setlocale("LC_ALL", "Norwegian")
+#+END_EXAMPLE
+
+Tetapi sekiranya RStudio dibuka kemudian larikan komman di atas, tidak akan menjadi
+bila membuka fail baru yang ada memakai huruf-huruf instimewa. Oleh itu kommando di
+atas harus di masukkan di =.Rprofile=
+
+Untuk menetapkan di mana =.Rpofile= di letakkan, bula guna
+
+#+BEGIN_EXAMPLE
+getwd()
+dir()
+#+END_EXAMPLE
