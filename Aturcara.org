@@ -12,7 +12,7 @@ Tetapi sekiranya RStudio dibuka kemudian larikan komman di atas, tidak akan menj
 bila membuka fail baru yang ada memakai huruf-huruf instimewa. Oleh itu kommando di
 atas harus di masukkan di =.Rprofile=
 
-Untuk menetapkan di mana =.Rpofile= di letakkan, bula guna
+Untuk menetapkan di mana =.Rprofile= di letakkan, bula guna
 
 #+BEGIN_EXAMPLE
 getwd()
