@@ -33,3 +33,27 @@ data.frame ke yang kedua
   names(dataFrame02) <- names(dataFrame01)
   data <- rbind(dataFrame01, dataFrame02)
 #+END_EXAMPLE
+
+Contoh untuk buat
+#+BEGIN_SRC R
+  sykehus <- c("Oslo", "Bergen", "Drammen", "Kristiansand", "Stavanger", "Tromsø", "Kirkenes", "Trondheim")
+  antall <- sample(90:250, 8)
+  prosent <- sample(50:70, 8)
+  indikator <- data.frame(sykehus, antall, prosent)
+  indikator$year <- 2015
+
+  antall <- sample(60:150, 8)
+  prosent <- sample(35:60, 8)
+  indikator01 <- data.frame(sykehus, antall, prosent) #data.frame baru
+  indikator01$year <- 2016
+
+  names(indikator01) <- names(indikator) #kopi nama variable
+
+  indikator002 <- rbind(indikator, indikator01)
+  indikator002$region[sykehus %in% c("Oslo", "Drammen", "Kristiansand")] <- 1
+  indikator002$region[sykehus %in% c("Stavanger", "Bergen")] <- 2
+  indikator002$region[sykehus %in% c("Tromsø", "Kirkenes")] <- 3
+  indikator002$region[sykehus %in% c("Trondheim")] <- 4
+
+  saveRDS(indikator002, "~/Git-work/bdrdash/data/indikator003.RDS")
+#+END_SRC
