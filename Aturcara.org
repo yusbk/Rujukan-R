@@ -18,3 +18,18 @@ Untuk menetapkan di mana =.Rprofile= di letakkan, bula guna
 getwd()
 dir()
 #+END_EXAMPLE
+* Buat data.frame
+Buat data.frame utk contoh dataset
+#+BEGIN_EXAMPLE
+  sykehus <- c("Oslo", "Bergen", "Drammen", "Kristiansand", "Stavanger", "Tromsø", "Kirkenes", "Trondheim")
+  antall <- sample(230:450, 8)
+  prosent <- sample(30:80, 8)
+  indikator01 <- data.frame(sykehus, antall, prosent)
+#+END_EXAMPLE
+
+Untuk gabung dua data.frame yang berlainan nama variable, kopi nama salah satu
+data.frame ke yang kedua
+#+BEGIN_EXAMPLE
+  names(dataFrame02) <- names(dataFrame01)
+  data <- rbind(dataFrame01, dataFrame02)
+#+END_EXAMPLE
