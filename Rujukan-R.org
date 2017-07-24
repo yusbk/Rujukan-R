@@ -228,3 +228,17 @@ Ini ialah contoh untuk menggabungkan pelbagai plot bila x-axis berbeza tetapi be
   grid.newpage()
   grid.draw(gt)
 #+END_SRC
+* Data.Table
+
+Fungsi %like% yang senang dipakai boleh baca di [[https://www.rdocumentation.org/packages/data.table/versions/1.10.4/topics/like][RDocumentation]]. Berfungsi secara begini
+#+BEGIN_EXAMPLE
+  like(vector, pattern)
+  vector %like% pattern
+#+END_EXAMPLE
+
+#+BEGIN_SRC R
+  DT = data.table(Name=c("Mary","George","Martha"), Salary=c(2,3,4))
+  DT[Name %like% "^Mar"]
+#+END_SRC
+
+Menghasilkan subset data DT$Names dan DT$Salary yang mengandungi hanya pattern ~Mar~ di DT$Names sahaja.
