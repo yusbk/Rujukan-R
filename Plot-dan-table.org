@@ -1,0 +1,388 @@
+#+Title: Plot dan tabel
+
+Cara ini diambil dan diubah suai dari [[https://mcfromnz.wordpress.com/2012/11/06/forest-plots-in-r-ggplot-with-side-table/][Forest plot]] disebabkan pertukaran fungi si ggplot2.
+
+#+BEGIN_SRC R
+  library(ggplot2)
+  library(gridExtra)
+
+  dat <- data.frame(group = factor(c("A","B","C","D","E","F","G"), levels=c("F","E","D","C","B","A","G")),
+                    cen = c(3.1,2.0,1.6,3.2,3.6,7.6,NA),
+                    low = c(2,0.9,0.8,1.5,2,4.2,NA),
+                    high = c(6,4,2,6,5,14.5,NA))
+
+  ## ## uten levels
+  ## dat <- data.frame(group = factor(c("A","B","C","D","E","F","G")),
+  ##                   cen = c(3.1,2.0,1.6,3.2,3.6,7.6,NA),
+  ##                   low = c(2,0.9,0.8,1.5,2,4.2,NA),
+  ##                   high = c(6,4,2,6,5,14.5,NA))
+
+
+  theme_set(theme_bw())
+
+  theme_update(
+    axis.line = element_line(colour = "black"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    plot.margin = unit(c(0,0,0,0), "lines")
+  )
+
+  p <- ggplot(dat,aes(cen,group)) +
+    geom_point(size=5, shape=18) +
+    geom_errorbarh(aes(xmax = high, xmin = low), height = 0.15) +
+    geom_vline(xintercept = 1, linetype = "longdash") +
+    scale_x_continuous(breaks = seq(0,14,1), labels = seq(0,14,1)) +
+    labs(x="Adjusted Odds Ratio", y="")
+
+  lab <- data.frame(V0 = factor(c("A","B","C","D","E","F","G","A","B","C","D","E","F","G","A","B","C","D","E","F","G","A","B","C","D","E","F","G"), levels=c("G","F","E","D","C","B","A")),
+                    V05 = rep(c(1,2,3,4),each=7),
+                    V1 = c("Occuption","Active","","Inactive","","Inactive","","Recreation","Inactive","","Active","","Inactive","","Gender","Men","Women","Men","Women","Men","Women","OR",3.1,2.0,1.6,3.2,3.6,7.6)
+
+                    data_table <- ggplot(lab, aes(x = V05, y = V0, label = format(V1, nsmall = 1))) +
+                      geom_text(size = 4, hjust=0, vjust=0.5)+ theme_bw() +
+                      geom_hline(yintercept=c(6.5,7.5)) +
+                      theme(panel.grid.major = element_blank(),
+                            legend.position = "none",
+                            panel.border = element_blank(),
+                            axis.text.x = element_text(colour="white"),#element_blank(),
+                            axis.text.y = element_blank(),
+                            axis.ticks = element_line(colour="white"),#element_blank(),
+                            plot.margin = unit(c(0,0,0,0), "lines")) +
+                      labs(x="",y="") +
+                      coord_cartesian(xlim=c(1,4.5)))
+
+  grid.arrange(data_table, p, ncol=2)
+#+END_SRC
+
+Cara kedua diambil di [[http://chetvericov.ru/analiz-dannyx/grouped-forest-plots-using-ggplot2/#.Wnhntt_OCCh][blog]] ini yang juga diubahsuai mengikut fungsi terkini ggplot2
+
+#+BEGIN_SRC R
+  library(metafor)
+  ### load BCG vaccine data
+  data(dat.bcg)
+
+  ### Basic plot from metafor without annotation
+  res <- metafor::rma(ai = tpos,
+                      bi = tneg,
+                      ci = cpos,
+                      di = cneg,
+                      data = dat.bcg,
+                      measure = "RR",
+                      slab = paste(author,
+                                   year, sep = ", "),
+                      method = "REML")
+
+  par(bg = "white")
+  metafor::forest(res, slab = paste(dat.bcg$author, dat.bcg$year,
+                                    sep = ", "),
+                  xlim = c(-16, 6),
+                  at = log(c(0.05,
+                             0.25, 1, 4)),
+                  atransf = exp,
+                  ilab = cbind(dat.bcg$tpos,
+                               dat.bcg$tneg, dat.bcg$cpos, dat.bcg$cneg),
+                  ilab.xpos = c(-9.5,
+                                -8, -6, -4.5), cex = 0.75, ylim = c(-1, 27),
+                  order = order(dat.bcg$alloc),
+                  rows = c(3:4, 9:15, 20:23), mlab = "RE Model for All Studies")
+
+  ##############################################
+  ## Basic plot from metafor with annotation
+  ##############################################
+
+  par(bg = "white")
+  metafor::forest(res, slab = paste(dat.bcg$author, dat.bcg$year, sep = ", "),
+                  xlim = c(-16, 6),
+                  at = log(c(0.05, 0.25, 1, 4)),
+                  atransf = exp,
+                  ilab = cbind(dat.bcg$tpos, dat.bcg$tneg, dat.bcg$cpos, dat.bcg$cneg),
+                  ilab.xpos = c(-9.5, -8, -6, -4.5),
+                  cex = 0.75, ylim = c(-1, 27),
+                  order = order(dat.bcg$alloc),
+                  rows = c(3:4, 9:15, 20:23),
+                  mlab = "RE Model for All Studies")
+
+  op <- par(cex = 0.75, font = 4)
+  text(-16, c(24, 16, 5), c("Systematic Allcoation",
+                            "Random Allocation", "Alternate Allocation"), pos = 4)
+  par(font = 2)
+  text(c(-9.5, -8, -6, -4.5), 26, c("TB+", "TB-", "TB+", "TB-"))
+  text(c(-8.75, -5.25), 27, c("Vaccinated", "Control"))
+  text(-16, 26, "Author(s) and Year", pos = 4)
+  text(6, 26, "Relative Risk [95% CI]", pos = 2)
+  par(op)
+  res <- metafor::rma(ai = tpos,
+                      bi = tneg,
+                      ci = cpos,
+                      di = cneg,
+                      data = dat.bcg,
+                      measure = "RR",
+                      subset = (alloc == "systematic"),
+                      method = "REML")
+
+  metafor::addpoly(res, row = 18.5,
+                   cex = 0.75,
+                   atransf = exp,
+                   mlab = "RE Model for Subgroup")
+
+  res <- metafor::rma(ai = tpos, bi = tneg, ci = cpos, di = cneg,
+                      data = dat.bcg, measure = "RR", subset = (alloc ==
+                                                                  "random"), method = "REML")
+  metafor::addpoly(res, row = 7.5,
+                   cex = 0.75,
+                   atransf = exp,
+                   mlab = "RE Model for Subgroup")
+
+  res <- metafor::rma(ai = tpos,
+                      bi = tneg,
+                      ci = cpos,
+                      di = cneg,
+                      data = dat.bcg,
+                      measure = "RR",
+                      subset = (alloc == "alternate"),
+                      method = "REML")
+
+  metafor::addpoly(res, row = 1.5, cex = 0.75, atransf = exp,
+                   mlab = "RE Model for Subgroup")
+
+
+  ########################################
+  ## Same plot with ggplot2
+  ########################################
+
+  ## load packages
+  library(extrafont)  #Open Sans font for plot
+
+  loadfonts("postscript", quiet = T)
+
+  library(metafor)  #To compute weights and resulting effect sizes
+  library(xtable)  #xtable is used for creating HTML tables in this post
+
+  library(devtools)  #To use latest version of ggplot2
+  dev_mode(T)
+
+  library(ggplot2)
+  library(gridExtra)  #to set up plot grid
+  library(stringr)  #string formatting functions
+  library(divisors)  #this one will be used to set scale range and breaks
+  library(plyr)  #rbind.fill function
+
+  library(reshape2)  #transformation of tables
+
+
+  ######################
+  ## Compute SE, SD, CI
+  #####################
+
+  data(dat.bcg)
+
+  ### calculate log relative risks and
+  ### corresponding sampling variances
+  dat <- metafor::escalc(measure = "RR",
+                         ai = tpos,
+                         bi = tneg,
+                         ci = cpos,
+                         di = cneg,
+                         data = dat.bcg,
+                         append = TRUE)
+
+  dat$se <- sqrt(dat$vi)
+
+  dat <- transform(dat, ci.lower = yi - 1.96 * se,
+                   ci.upper = yi + 1.96 * se)
+
+  ## to get html file for publication on the net purposes
+  print(xtable(dat[, c("author", "year", "alloc", "yi",
+                       "vi", "se", "ci.lower", "ci.upper")]), html.table.attributes = NULL,
+        type = "HTML")
+
+
+  ## for grouping
+  for (i in unique(dat$alloc)) {
+    dat <- rbind.fill(dat, data.frame(year = 0, alloc = i,
+                                      stringsAsFactors = F))
+  }
+
+  ## For title
+  dat$title <- factor(paste(dat$alloc, dat$year, sep = ", "))
+  dat$titleN <- as.numeric(dat$title) #for position of row
+
+  ## Convert allocation to factor
+  dat$alloc <- factor(dat$alloc, levels = c("alternate",
+                                            "random", "systematic"),
+                      labels = c("Alternate",
+                                 "Random", "Systematic"))
+
+
+  ## Regression modell and combine to the data.frame
+  res.rdat.noi <- rma(data = dat[!is.na(dat$yi), ], yi = yi,
+                      vi = vi, mods = ~alloc - 1, slab = title, method = "REML")
+  res.rdat.dat <- data.frame(b = res.rdat.noi$b, SE.b = res.rdat.noi$se,
+                             alloc = levels(dat$alloc))
+
+  res.rdat.w <- data.frame(weights(res.rdat.noi))
+  names(res.rdat.w) <- "w"
+  res.rdat.w$title <- rownames(res.rdat.w)
+
+  dat <- merge(dat, res.rdat.w, by = "title", all = T)
+
+
+  ######
+  ## Plotting
+
+  plotSettings <- theme(legend.position = "none",
+                        axis.line.y = element_blank(),
+                        axis.ticks.y = element_blank(),
+                        plot.margin = unit(c(0, 0, 0, 0), "npc"),
+                        panel.spacing = unit(c(0, 0, 0, 0), "npc"),
+                        rect = element_blank(),
+                        axis.line = element_line(colour = "black", size = 0.3, linetype = 1),
+                        axis.title.x = element_blank(),
+                        axis.title.y = element_blank(),
+                        panel.grid.major = element_line(color = "red"),
+                        axis.text.y = element_blank())
+
+  # you can comment the next string for debug
+  plotSettings <- plotSettings + theme(panel.grid = element_blank(),
+                                       axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+                                       panel.grid.major = element_blank())
+
+  # I set position_dodge here, but it is
+  # unneccessary, if you don't use grouping factor
+  # as in this example. For the same reason there
+  # are two values for each scale in the following
+  # plot.
+  pd <- position_dodge(width = 0.7)
+
+  ######################
+  ## Compute effect size
+  ######################
+
+  rng <- range(na.omit(c(dat$ci.lower, dat$ci.upper)))
+
+  floor.dec <- function(x, digits) {
+    r <- round(x, digits)
+    r <- ifelse(r > x, r - 10^(-digits), r)
+    r
+  }
+  ceiling.dec <- function(x, digits) {
+    r <- round(x, digits)
+    r <- ifelse(r < x, r + 10^(-digits), r)
+    r
+  }
+  rng[1] <- floor.dec(rng[1], 1)
+  rng[2] <- ceiling.dec(rng[2], 1)
+
+  scale.rng <- diff(rng * 10)
+
+  divs = divisors(scale.rng)$divs
+
+  while (!sum(ifelse(divs > 6 & divs < 14, 1, 0))) {
+    scale.rng = scale.rng + 1
+    divs = divisors(scale.rng)$divs
+  }
+
+  div <- divs[divs > 6 & divs < 14][1]
+  scale.rng <- scale.rng/10
+
+  xstart=-(max(dat$titleN)+2+length(levels(res.rdat.dat$alloc)))
+  xend=4
+
+
+  ###############
+  ## Main Plot
+  ##############
+
+  mainPart<-ggplot(dat, aes(x=-titleN,y=yi, ymin=ci.lower, ymax=ci.upper, group=1)) +
+    scale_y_continuous(name=NULL, breaks=seq(rng[1], rng[1]+scale.rng, scale.rng/div), limits=c(rng[1], rng[1]+scale.rng), expand=c(0,0)) + ylab(NULL)+
+    geom_segment(aes(x=xstart, xend=0, y=0, yend=0), linetype=3, alpha=0.01)+
+    geom_vline(xintercept = c(xstart+length(levels(res.rdat.dat$alloc))+1,0), alpha=0.5, linetype=5)+
+    geom_linerange(aes(linetype="1"),position=pd)+
+    geom_point(aes(size=w, shape="1"), fill="white",position=pd)+
+    ## geom_linerange(data=res.rdat.dat, aes(x=xstart+length(levels(res.rdat.dat$alloc)):1, y=b,
+    ##                                       linetype="1", ymin=b-1.96*SE.b, ymax=b+1.96*SE.b), position=pd) +
+    ## geom_point(data=res.rdat.dat, mapping = aes(x=xstart+length(levels(res.rdat.dat$alloc)):1, y=b, shape="1", ymin=b-1.96*SE.b, ymax=b+1.96*SE.b), position=pd,  size=2, fill="white") +
+    coord_flip() +
+    scale_size_continuous(range=c(2,4)) +
+    scale_shape_manual(values=c(22,21))+
+    scale_linetype_manual(values=c(1,2))+
+    plotSettings+
+    scale_x_continuous(limits=c(xstart,xend), expand=c(0,0))+xlab(NULL)+
+    annotate("text", x=1, y=0, label='paste("Effect size (",italic("d"),") with 95% CI")', parse=T, family="Open Sans Semibold")+
+    guides(shape=guide_legend(title=NULL,keyheight=4), linetype=guide_legend(title=NULL), size="none")+
+    #theme(legend.position=c(-rng[1]/diff(rng),0.93),legend.direction="horizontal", legend.justification="center", legend.text=element_text(family="Open Sans Semibold", size=12))  +
+    #geom_text(aes(label=d, color=obj..fam),position=pd) +
+    theme()
+
+
+  #####################
+  ## Plot setting for list of strings
+  ####################
+
+  plotSettings2 <- theme(axis.ticks.x = element_blank(),
+                         axis.line.x = element_blank(), axis.text.x = element_text(color = "white"),
+                         axis.title.x = element_text(color = "white"))
+
+  # ystart & yend are arbitrary. [0, 1] is
+  # convinient for setting relative coordinates of
+  # columns
+
+  ystart = 0
+  yend = 1
+  update_geom_defaults("text", list(size = 4, hjust = 0.5, family = "Open Sans"))
+
+  ## create empty plot as frame
+  p1 <- ggplot(dat, aes(x = -titleN, y = 0)) +
+    coord_flip() +
+    scale_y_continuous(limits = c(ystart, yend)) +
+    plotSettings +
+    plotSettings2 +
+    scale_x_continuous(limits = c(xstart, xend), expand = c(0, 0)) +
+    xlab(NULL) + ylab(NULL)
+
+  ## apply the empty plot
+  studyList <- p1 +
+    with(unique(dat[is.na(dat$author)|dat$author=="", c("titleN","alloc")]),
+         annotate("text",label=alloc, x= -titleN,y=0, family="Open Sans Semibold", hjust=0)) +
+    with(dat[!is.na(dat$author)&!duplicated(dat$title),],
+         annotate("text",label=paste(author, year,sep=','),x=-titleN,y=0.02, hjust=0))+
+    annotate("text",x=c(1,xstart + length(levels(res.rdat.dat$alloc)):1),y=0, hjust=0,label=c("Study", levels(res.rdat.dat$alloc)),fontface=2) +
+    geom_vline(xintercept = c(xstart+length(levels(res.rdat.dat$alloc))+1,0),alpha=0.5,linetype=5)
+
+
+  ###############
+  ## effect size table
+
+  f <- function(x) sprintf("% 0.2f", x)
+
+  dat$f.se <- sprintf("% 00.2f", dat$se)
+  dat$f.vi <- f(dat$vi)
+
+  data <- melt(subset(dat, !is.na(vi), c("title", "titleN",
+                                         "f.vi", "f.se")), measure.vars = c(3:4))
+
+  effectSizes1 <- p1+annotate("text",x=-data$titleN, y=ifelse(data$variable=="f.vi",0.25,0.75),label=data$value) +
+    annotate("text",x=-c(-1,-1), y=rep(c(0.25,0.75)), label=c("italic(d)","italic(SE[d])"),parse=T,fontface=2) +
+    #annotate("text",x=-c(-2.5), y=c(0.5), label=c("Top label"),fontface=2) +
+    with(res.rdat.dat, annotate("text",x=rep(xstart+length(levels(res.rdat.dat$alloc)):1, 2),
+                                y=rep(c(0.25,0.75),each=length(levels(res.rdat.dat$alloc))),
+                                label=c(f(b),sprintf("% 00.2f",SE.b)))) +
+    geom_vline(xintercept = -c(max(dat$titleN+1),0), alpha=0.5,linetype=5)
+
+  effectSizes1
+
+
+  ####################
+  ## put all together
+  ####################
+
+  grid.arrange(ggplotGrob(studyList), ggplotGrob(mainPart),
+               ggplotGrob(effectSizes1),
+               ncol = 3,
+               widths = unit(c(0.25, 0.45, 0.3), "npc"))
+
+#+END_SRC
