@@ -55,3 +55,43 @@ Atau pastikan susunan ditetapkan sebagai /ordered list/ di data.frame
 #+BEGIN_EXAMPLE
   df$var <- factor(df$var, levels = df$var)
 #+END_EXAMPLE
+* plotly
+Guna untuk interaktif:
+** Label
+Untuk kontrol label yang ditunjukkan
+#+BEGIN_SRC R
+  seq <- 1:10
+  name <- c(paste0("company",1:10))
+  value <- c(250,125,50,40,40,30,20,20,10,10)
+  d <- data.frame(seq,name,value)
+
+  require(ggplot2)
+  require(plotly)
+
+  gg <- ggplot(data = d, aes(x = seq, y = value, label = name)) + geom_line() + geom_point()
+  ggplotly(gg)
+
+  ggplotly(gg, tooltip = c("label")) # hanya tunjukkan label tanpa x or y
+  ggplotly(gg, tooltip = NULL)
+
+
+
+
+  ######################################
+  ## Cara 2
+  require(ggplot2)
+  ggplot(data = d,aes(x = seq,
+    y = value,
+    group = 1,
+    text = paste('name: ', name,
+      '</br>name_again: ', name)
+  ))+
+    geom_line() +
+    geom_point()
+
+
+  require(plotly)
+  ggplotly(, tooltip = c("x", "y", "text"))
+#+END_SRC
+
+#+RESULTS:
