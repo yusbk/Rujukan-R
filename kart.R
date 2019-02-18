@@ -82,3 +82,37 @@ ggplot(data = norgeDD, aes(long, lat, map_id = id)) +
 ggplot(data = norgeDD, aes(long, lat, map_id = id)) +
   geom_map(data = norgeDD, aes(map_id = id, fill = as.factor(tall)), map = norgeDD) +
   coord_map()
+
+##### ----------
+## SF format
+
+library(sf)
+norgesf <- sf::st_read("~/Git-personal/Rujukan-R/norge/NOR_adm1.shp")
+class(norgesf)
+
+dim(norgesf)
+
+library(ggplot2)
+ggplot(data = norgesf) + geom_sf()
+
+## text
+norge_txt <- st_centroid(norgesf) #convert til point spatial
+norge_txt <- cbind(norgesf, st_coordinates(st_centroid(norgesf$geometry)))
+
+ggplot(data = norgesf) +
+  geom_sf() +
+  geom_text(data = norge_txt, aes(x = X, y = Y, label = NAME_1),
+    fontface = "bold", check_overlap = FALSE) +
+  coord_sf()
+
+library("ggrepel")
+ggplot(data = norgesf) +
+  geom_sf() +
+  geom_text_repel(data = norge_txt, aes(x = X, y = Y, label = NAME_1),
+    fontface = "bold") +
+  coord_sf()
+
+## eksample repel
+geom_text_repel(data = flcities, aes(x = lng, y = lat, label = city),
+        fontface = "bold", nudge_x = c(1, -1.5, 2, 2, -1), nudge_y = c(0.25,
+            -0.25, 0.5, 0.5, -0.5)) +
