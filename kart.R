@@ -77,3 +77,8 @@ dim(norgeDD)
 ggplot(data = norgeDD, aes(long, lat, map_id = id)) +
   geom_map(data = norgeDD, aes(map_id = id, fill = tall), map = norgeDD) +
   coord_map()
+
+
+ggplot(data = norgeDD, aes(long, lat, map_id = id)) +
+  geom_map(data = norgeDD, aes(map_id = id, fill = as.factor(tall)), map = norgeDD) +
+  coord_map()
