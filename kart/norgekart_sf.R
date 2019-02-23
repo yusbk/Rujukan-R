@@ -84,6 +84,7 @@ g2 +
                   nudge_x = 6, #spesifere hvor tekst starter på x-aksen
                   direction = "y", #spesifisere at tekst fordeles langs y-aksen
                   force = 20) + #forstår ikke hvordan force funker
+  geom_point(data = subset(fylkeco, ID_1 %in% utNavn), aes(X, Y), color = "red", size = 1) +
   coord_sf()
 
 
@@ -96,3 +97,7 @@ g3 +
 g2 +
   geom_text(data = fylkeco, aes(X, Y, label=fylke), size=5) +
   coord_sf(xlim = c(9.5, 12.5), ylim = c(58.8, 60.7), expand = TRUE)  #tilpasse størrelse hvis overlapper
+
+
+
+fylkeco
