@@ -101,6 +101,7 @@ norge_txt <- cbind(norgesf, st_coordinates(st_centroid(norgesf$geometry)))
 
 ggplot(data = norgesf) +
   geom_sf() +
+
   geom_text(data = norge_txt, aes(x = X, y = Y, label = NAME_1),
     fontface = "bold", check_overlap = FALSE) +
   coord_sf()
@@ -111,6 +112,11 @@ ggplot(data = norgesf) +
   geom_text_repel(data = norge_txt, aes(x = X, y = Y, label = NAME_1),
     fontface = "bold") +
   coord_sf()
+
+
+library(sf)
+norgejason <- st_read(dsn = "~/Documents/kart/Basisdata_0000_Norge_25833_Kommuner_GEOJSON.geojson")
+
 
 ## eksample repel
 geom_text_repel(data = flcities, aes(x = lng, y = lat, label = city),
