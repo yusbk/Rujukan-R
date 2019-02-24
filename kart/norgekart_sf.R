@@ -10,7 +10,10 @@ kart_sf = sf::st_read("~/Git-personal/Rujukan-R/norge/NOR_adm1.shp", stringsAsFa
 class(kart_sf)
 
 ## plot(kart_sf) #ikke kjør. Denne lages 6 kart
+plot(st_geometry(kart_sf)) #bruk denne for å plotte et kart
 
+## Se inhold og struktur
+st_geometry(kart_sf)
 head(kart_sf)
 
 ## bytte Åstfold to Østfold
@@ -105,3 +108,9 @@ g2 +
 
 
 fylkeco
+
+
+## plotte utvalgte fylke med base graphics
+valgFylke <- subset(kart_sf, ID_1 %in% c(12, 10, 14, 7))
+plot(st_geometry(kart_sf))
+plot(st_geometry(valgFylke), add = TRUE, col = "red")
