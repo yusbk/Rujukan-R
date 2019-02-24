@@ -77,15 +77,28 @@ g2 +
 
 ## For at tekstene ikke legges oppe hverandre, kan bruke ggrepel pakke
 library(ggrepel)
-utNavn <- c(12, 2, 19, 1) #velge fykle Oslo, Akerhus, Østfold og Vestfold
+utNavn <- c(12, 2, 1) #velge fykle Oslo, Akerhus, Østfold og Vestfold
+vest <- 19
 
 g2 +
   geom_text_repel(data = subset(fylkeco, ID_1 %in% utNavn), aes(X, Y, label=fylke), size=3,
-                  nudge_x = 6, #spesifere hvor tekst starter på x-aksen
+                  nudge_x = c(2, 3, 4), #spesifere hvor tekst starter på x-aksen. 2 for Østfold mens 4 for Oslo dvs. reverse som på utNavn rekkefølge
                   direction = "y", #spesifisere at tekst fordeles langs y-aksen
-                  force = 20) + #forstår ikke hvordan force funker
-  geom_point(data = subset(fylkeco, ID_1 %in% utNavn), aes(X, Y), color = "red", size = 1) +
+                  force = 2) + #forstår ikke hvordan force funker
+  geom_text_repel(data = subset(fylkeco, ID_1 == 19), aes(X, Y, label = fylke), size = 3,
+    nudge_y = -1, #direction downwards 1 y-scale
+    direction = "x") +
+  geom_point(data = subset(fylkeco, ID_1 %in% c(utNavn, 19)), aes(X, Y), color = "red", size = 1) +
   coord_sf()
+
+
+g2 +
+  geom_text_repel(data = subset(fylkeco, ID_1 %in% utNavn), aes(X, Y, label=fylke), size=3,
+                  nudge_x = c(20, 4, 5, 10), #spesifere hvor tekst starter på x-aksen
+                  direction = "y") + #spesifisere at tekst fordeles langs y-aksen
+   geom_point(data = subset(fylkeco, ID_1 %in% utNavn, aes(X, Y), color = "red", size = 1) +
+  coord_sf()
+
 
 
 # Viser bare fylke Akerhus og Oslo
