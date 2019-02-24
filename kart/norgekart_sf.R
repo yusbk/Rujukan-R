@@ -92,15 +92,6 @@ g2 +
   coord_sf()
 
 
-g2 +
-  geom_text_repel(data = subset(fylkeco, ID_1 %in% utNavn), aes(X, Y, label=fylke), size=3,
-                  nudge_x = c(20, 4, 5, 10), #spesifere hvor tekst starter på x-aksen
-                  direction = "y") + #spesifisere at tekst fordeles langs y-aksen
-   geom_point(data = subset(fylkeco, ID_1 %in% utNavn, aes(X, Y), color = "red", size = 1) +
-  coord_sf()
-
-
-
 # Viser bare fylke Akerhus og Oslo
 # if 'expand = TRUE' to expand the limit by a fraction so data and axes don't overlap
 g3 +
