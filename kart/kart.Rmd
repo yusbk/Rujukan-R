@@ -1,0 +1,64 @@
+---
+Title: Test
+output: html_document 
+---
+
+# Test 
+
+Test for plotly
+
+```{r setup, echo = FALSE, include=FALSE, warning=FALSE}
+
+list.of.packages <- c("leaflet","ggplot2","dplyr","gridExtra","psych","data.table","sf","ggrepel")
+
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+sapply(list.of.packages, require, character.only = TRUE)
+
+kart_sf1 = sf::st_read("~/Git-personal/Rujukan-R/norge/NOR_adm1.shp", stringsAsFactors = FALSE)
+```
+
+```{r test, echo=FALSE, message=FALSE, result='asis', warning = FALSE}
+## bytte Åstfold to Østfold
+library(dplyr)
+kart_sf <- kart_sf1 %>%
+  mutate(NAME_1, fylke=ifelse(ID_1==1, 'Østfold', NAME_1))
+
+hso <- c("Østfold", "Akershus", "Aust-Agder", "Buskerud", "Hedmark", "Oppland", "Oslo", "Telemark", "Vest-Agder", "Vestfold")
+hsv <- c("Hordaland", "Rogaland", "Sogn og Fjordane")
+hsm <- c("Møre og Romsdal", "Sør-Trøndelag", "Nord-Trøndelag")
+hsn <- c("Finnmark", "Nordland", "Troms")
+
+
+## dekningsgrad BDR
+kart_sf3 <- kart_sf %>%
+  mutate(fylke, helsereg =
+                  ifelse(fylke %in% hso, 1,
+                  ifelse(fylke %in% hsv, 2,
+                         ifelse(fylke %in% hsm, 3, 4)))) %>%
+  mutate(helsereg, helsenavn =
+                     ifelse(fylke == 1, "Helse Sør-Øst",
+                       ifelse(fylke == 2, "Helse Vest",
+                         ifelse(fylke == 3, "Helse Midt", "Helse Nord")))) %>%
+  mutate(helsereg, dekning =
+                     ifelse(fylke == 1, 99,
+                       ifelse(fylke == 2, 98,
+                         ifelse(fylke == 3, 98, 97))))
+
+library(plotly)
+## tooltips ved hoving
+plot_ly(
+  kart_sf,
+  split = ~fylke, #for at hoveron blir categorisert riktig så må bruke 'Split'
+  color = ~helsereg,
+    text = ~paste("Dekningsgrad ", dekning),
+  hoverinfo = "text",
+  hoveron = "fill" #brukes for å vise utvalgte tooltips annen enn district
+) %>%
+  layout(showlegend = FALSE)
+
+
+```
+
+
+
