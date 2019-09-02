@@ -3,7 +3,7 @@
 list.of.packages <- c("leaflet","ggplot2","dplyr","gridExtra","psych","data.table","sf","ggrepel")
 
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-if(length(new.packages)) install.packages(new.packages)
+if(length(new.packages)) install.packages(new.packages, repos = "https://cloud.r-project.org/")
 sapply(list.of.packages, require, character.only = TRUE)
 
 #kart fylke
