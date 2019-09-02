@@ -31,13 +31,36 @@ library(dplyr)
 kart_sf <- kart_sf %>%
   mutate(NAME_1, fylke=ifelse(ID_1==1, 'Østfold', NAME_1))
 
+## sør- og nord Trøndelag slår sammen siden jan 2018
+kart_sf <- kart_sf %>%
+  mutate(ID_1, fID = ifelse(ID_1 %in% c(9, 14), 50, ID_1))
+
+kart_sf <- kart_sf %>%
+  mutate(fylke, region=ifelse(fID==50, 'Trøndelag', fylke))
+
+
+## saveRDS(kart_sf, "kartNorge_sf.RDS")
+
+
+
+kart_sf %>%
+  select(fylke, ID_1)
+
+unique(kart_sf$fID)
+unique(kart_sf$fylke)
+unique(kart_sf$region)
+
+
+idfylke <- group_by(kart_sf, )
+
+str(kart_sf)
 nrow(kart_sf)
 
 kart_sf$fylke
 
 hso <- c("Østfold", "Akershus", "Aust-Agder", "Buskerud", "Hedmark", "Oppland", "Oslo", "Telemark", "Vest-Agder", "Vestfold")
 hsv <- c("Hordaland", "Rogaland", "Sogn og Fjordane")
-hsm <- c("Møre og Romsdal", "Sør-Trøndelag", "Nord-Trøndelag")
+hsm <- c("Møre og Romsdal", "Trøndelag", "Trøndelag")
 hsn <- c("Finnmark", "Nordland", "Troms")
 
 hso1 <- c()
