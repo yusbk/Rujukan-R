@@ -58,16 +58,17 @@ nrow(kart_sf)
 
 kart_sf$fylke
 
+
+## Legger til HF
 hso <- c("Østfold", "Akershus", "Aust-Agder", "Buskerud", "Hedmark", "Oppland", "Oslo", "Telemark", "Vest-Agder", "Vestfold")
 hsv <- c("Hordaland", "Rogaland", "Sogn og Fjordane")
-hsm <- c("Møre og Romsdal", "Trøndelag", "Trøndelag")
+hsm <- c("Møre og Romsdal", "Trøndelag")
 hsn <- c("Finnmark", "Nordland", "Troms")
 
-hso1 <- c()
 
 
 kart_sf <- kart_sf %>%
-  mutate(fylke, helsereg = ifelse(fylke %in% hso, 1, ifelse(fylke %in% hsv, 2, ifelse(fylke %in% hsm, 3, 4))))
+  mutate(region, helsereg = ifelse(region %in% hso, 1, ifelse(region %in% hsv, 2, ifelse(region %in% hsm, 3, 4))))
 
 ## dekningsgrad BDR
 kart_sf <- kart_sf %>%
@@ -104,13 +105,14 @@ sf::st_geometry(kart_df) <- NULL
 class(kart_df) #class data.frame
 str(bodo)
 
-## Simple kart
+## Simple kart helse region
 library(ggplot2)
 g1 <- ggplot(kart_sf, aes(fill=as.factor(helsereg))) + geom_sf()
 g1 + geom_point(data = bodo, mapping = aes(lon, lan)) + coord_sf()
 g1 + theme(legend.position = 'none')
 g1
 
+## Merkere hvor Bodø er
 bodo  <- data.frame(navn = "Bodø", lan = 67.2804, lon = 14.4049)
 ggplot(kart_sf) + geom_sf() +
   geom_point(data = bodo, mapping = aes(lon, lan), size = 4, shape = 20, color = "red") +
@@ -119,6 +121,7 @@ ggplot(kart_sf) + geom_sf() +
 
 bodo
 plotg1 <- plotly::ggplotly(g1)
+plotg1
 
 
 ## Bruk av forskjellige Coordinate Reference System
@@ -126,7 +129,7 @@ plotg1 <- plotly::ggplotly(g1)
 
 ## Discrete eller dichotomous data
 g2 <- ggplot(kart_sf) +
-  aes(fill=fylke) +
+  aes(fill=region) +
   scale_fill_viridis_d() + #viridis d for discrete
   geom_sf() +
   coord_sf(crs = 4326, datum = sf::st_crs(4326)) +
