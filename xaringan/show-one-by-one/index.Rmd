@@ -12,7 +12,6 @@ output:
       highlightLines: true
 ---
 
-Code comes from [https://emitanaka.rbind.io/post/knitr-knitr-code](https://emitanaka.rbind.io/post/knitr-knitr-code/)
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=TRUE)
@@ -174,3 +173,9 @@ count: false
 ```{r output9, echo=FALSE, code=reveal("complete", 9, 9)}
 ```
 ]]
+
+---
+
+# Reference
+
+Code comes from [https://emitanaka.rbind.io/post/knitr-knitr-code](https://emitanaka.rbind.io/post/knitr-knitr-code/)
