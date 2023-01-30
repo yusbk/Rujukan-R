@@ -5,7 +5,7 @@ output:
 ---
 
 # Add slides
-How to add slides without extra chunk
+How to add slides without extra chunk. Reference from [StackOverflow](https://stackoverflow.com/a/57838268)
 
 ```{r, echo = -4}
 version$version.string 

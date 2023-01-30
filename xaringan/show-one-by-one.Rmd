@@ -12,6 +12,7 @@ output:
       highlightLines: true
 ---
 
+Code comes from [https://emitanaka.rbind.io/post/knitr-knitr-code](https://emitanaka.rbind.io/post/knitr-knitr-code/)
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=TRUE)
