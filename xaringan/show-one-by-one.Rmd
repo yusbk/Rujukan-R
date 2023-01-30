@@ -1,0 +1,175 @@
+---
+title: "ggplot tutorial"
+subtitle: "with kunoichi + ninjutsu theme"
+author: "<br><br> Emi Tanaka"
+date: "<br>2018/09/16"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: ["kunoichi", "ninjutsu"]
+    nature:
+      ratio: "16:9"
+      highlightLines: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE)
+knitr::opts_chunk$set(fig.height=6, out.width="100%")
+library(ggplot2)
+# reveal lines up to `upto` and highlight lines `highlight`
+reveal <- function(name, upto, highlight) {
+content <- knitr:::knit_code$get(name)
+  content[upto] <- gsub("+", "", content[upto], fixed=T)
+  content[highlight] <- paste(content[highlight], "#<<")
+  content[1:upto]
+} 
+
+```
+
+```{r complete, eval=F, echo=F}
+ggplot(iris) +
+  aes(Sepal.Length, Sepal.Width) +
+  geom_point() +
+  labs(x = "Add label to Sepal Length") +
+  labs(y = "Add label to Sepal Width") +
+  labs(title="The famous iris data") + 
+  labs(subtitle="Data collected by Anderson, Edgar (1935)") +
+  aes(color= Species) +
+  theme_bw(base_size=16)
+```
+
+class: split-40 
+count: false
+
+```{css, echo=FALSE}
+.remark-code{ line-height: 2; }
+```
+
+.column[.content[
+```{r plot1, eval=FALSE, code=reveal("complete", 1, 1)}
+```
+]]
+.column[.content.center[
+```{r output1, echo=FALSE, code=reveal("complete", 1, 1)}
+```
+]]
+
+---
+
+class: split-40 
+count: false
+
+.column[.content[
+```{r plot2, eval=FALSE, code=reveal("complete", 2, 2)}
+```
+]]
+.column[.content.center[
+```{r output2, echo=FALSE, code=reveal("complete", 2, 2)}
+```
+]]
+
+---
+
+class: split-40 
+count: false
+
+.column[.content[
+```{r plot3, eval=FALSE, code=reveal("complete", 3, 3)}
+```
+]]
+.column[.content.center[
+```{r output3, echo=FALSE, code=reveal("complete", 3, 3)}
+```
+]]
+
+---
+
+class: split-40 
+count: false
+
+.column[.content[
+```{r plot4, eval=FALSE, code=reveal("complete", 4, 4)}
+```
+
+]]
+.column[.content.center[
+```{r output4, echo=FALSE, code=reveal("complete", 4, 4)}
+```
+]]
+
+---
+
+class: split-40 
+count: false
+
+.column[.content[
+```{r plot5, eval=FALSE, code=reveal("complete", 5, 5)}
+```
+
+]]
+.column[.content.center[
+```{r output5, echo=FALSE, code=reveal("complete", 5, 5)}
+```
+]]
+
+---
+
+class: split-40 
+count: false
+
+.column[.content[
+```{r plot6, eval=FALSE, code=reveal("complete", 6, 6)}
+```
+
+]]
+.column[.content.center[
+```{r output6, echo=FALSE, code=reveal("complete", 6, 6)}
+```
+]]
+
+---
+
+class: split-40 
+count: false
+
+.column[.content[
+```{r plot7, eval=FALSE, code=reveal("complete", 7, 7)}
+```
+
+]]
+.column[.content.center[
+```{r output7, echo=FALSE, code=reveal("complete", 7, 7)}
+```
+]]
+
+---
+
+class: split-40 
+count: false
+
+.column[.content[
+```{r plot8, eval=FALSE, code=reveal("complete", 8, 8)}
+```
+
+]]
+.column[.content.center[
+```{r output8, echo=FALSE, code=reveal("complete", 8, 8)}
+```
+]]
+
+
+---
+
+class: split-40 
+count: false
+
+.column[.content[
+```{r plot9, eval=FALSE, code=reveal("complete", 9, 9)}
+```
+
+]]
+.column[.content.center[
+```{r output9, echo=FALSE, code=reveal("complete", 9, 9)}
+```
+]]
