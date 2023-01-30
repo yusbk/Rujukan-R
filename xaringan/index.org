@@ -1,4 +1,4 @@
 #+title: Websites
 
-- [[file:xaringan/all-in-one][Write all in one chunck]]
-- [[file:xaringan/show-one-by-one][Show codes one by one]]
+- [[file:all-in-one][Write all in one chunck]]
+- [[file:show-one-by-one][Show codes one by one]]
