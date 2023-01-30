@@ -1,0 +1,36 @@
+Package: fhimaps
+Title: Preformatted Maps of Norway That Don't Need Geolibraries
+Version: 2021.8.5
+Authors@R: c(
+  person(c("Richard","Aubrey"), "White", email = "hello@rwhite.no", role = c("aut", "cre"),
+    comment = c(ORCID = "0000-0002-6747-1726")
+  ),
+  person("Chi", "Zhang", email = "andreachizhang@yahoo.com", role = c("aut"), 
+    comment = c(ORCID = "0000-0003-0501-5909")),
+  person("Kartverket", role = c("cph")
+    )
+  )
+Description: Preformatted maps of Norway that don't need geolibraries.
+Depends: R (>= 3.5.0)
+License: MIT
+URL: https://folkehelseinstituttet.github.io/fhimaps,
+        https://github.com/folkehelseinstituttet/fhimaps
+BugReports: https://github.com/folkehelseinstituttet/fhimaps/issues
+LazyData: true
+Imports: data.table, utils
+Suggests: testthat, fhidata, knitr, rmarkdown, geojsonio, broom,
+        rmapshaper, ggplot2, rgeos, mapproj, stringr, glue, lubridate,
+        readxl, zoo, crayon, fs, sp, forcats, ncdf4, reshape2, sf,
+        methods, ggrepel, leaflet, magrittr
+RoxygenNote: 7.1.1
+VignetteBuilder: knitr
+Encoding: UTF-8
+Additional_repositories: https://folkehelseinstituttet.github.io/drat/
+Date/Publication: 2021-08-05 07:13:28 UTC
+NeedsCompilation: no
+Packaged: 2021-08-05 07:18:32 UTC; root
+Author: Richard Aubrey White [aut, cre]
+    (<https://orcid.org/0000-0002-6747-1726>),
+  Chi Zhang [aut] (<https://orcid.org/0000-0003-0501-5909>),
+  Kartverket [cph]
+Maintainer: Richard Aubrey White <hello@rwhite.no>
