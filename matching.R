@@ -55,3 +55,27 @@ plot(match.it, type = 'jitter', interactive = FALSE)
 ## Save matched data
 df.match <- match.data(match.it)[1:ncol(mydata)]
 rm(df.patients, df.population)
+
+# Match 5
+set.seed(1421)
+match.it5 <- matchit(Group ~ Age + Sex, data = mydata, method="nearest", ratio=5)
+a5 <- summary(match.it5)
+
+plot(match.it5, type = 'jitter', interactive = FALSE)
+## Save matched data
+df.match5 <- match.data(match.it5)[1:ncol(mydata)]
+
+# Match 5 and Distress
+set.seed(1421)
+match.it5d <- matchit(Group ~ Age + Sex + Distress,
+                      data = mydata,
+                      method="nearest",
+                      ratio=5,
+                      verbose = T)
+
+a5d <- summary(match.it5d)
+
+plot(match.it5d, type = 'jitter', interactive = FALSE)
+## Save matched data
+df.match5d <- match.data(match.it5d)[1:ncol(mydata)]
+dt5d <- as.data.table(df.match5d)
