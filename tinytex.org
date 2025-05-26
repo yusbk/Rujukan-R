@@ -1,0 +1,14 @@
+#+title: TinyTex installation
+
+
+* Path in Windows
+
+TinyTex can be installed as usual. It will be installed in =~/AppData/Roaming=
+folder.
+ - Folder =TinyTex= can be copied and moved to anywhere.
+ - Delete folder =TinyTex= from =AppData/Roaming=
+ - Copy it to =C:/Emacstillegg=.
+ - Add folder to *PATH* ="C:/Emacstillegg/TinyTeX/bin/windows"=
+ - Run =tinytex::use_tinytex("C:/Emacstillegg/TinyTeX")=
+ - Check that it's in the root file with =tinytex::tinytex_root()=
+ - Check that is't =TRUE= when running =tinytex::is_tinytex()=
