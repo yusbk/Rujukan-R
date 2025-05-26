@@ -12,3 +12,8 @@ folder.
  - Run =tinytex::use_tinytex("C:/Emacstillegg/TinyTeX")=
  - Check that it's in the root file with =tinytex::tinytex_root()=
  - Check that is't =TRUE= when running =tinytex::is_tinytex()=
+
+* Other options
+- Set =tinytex.tlmgr.path= in R option to where the =bin/windows= folder is so R
+  tinytex can find the executable file. Ref is [[https://forum.posit.co/t/install-tinytex-for-rstudio-for-all-users-on-windows/153089/3][here]].
+- General reference can be found in [[https://github.com/rstudio/tinytex-releases][Github]]
