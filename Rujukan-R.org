@@ -242,3 +242,10 @@ Fungsi %like% yang senang dipakai boleh baca di [[https://www.rdocumentation.org
 #+END_SRC
 
 Menghasilkan subset data DT$Names dan DT$Salary yang mengandungi hanya pattern ~Mar~ di DT$Names sahaja.
+
+** Buang attributes
+Attributes atau class di dataset boleh membuat masalah. Cara senang buang boleh buat begini:
+
+#+begin_example
+DT[, (names(DT)) := lapply(.SD, function(x) { attributes(x) <- NULL; x })]
+#+end_example
