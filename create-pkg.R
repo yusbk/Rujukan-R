@@ -49,12 +49,16 @@ sapply(pkgs, require, character.only = TRUE)
 devtools::install_github("ropenscilabs/travis")
 
 ## Setup R pkg structure
-create_package("~/Git-personal/norgeo")
+usethis::create_package("~/Git-personal/norgeo")
+## This command creates three things:
+## 1. DESCRIPTION file
+## 2. R/ folder
+## 3. NAMESPACE file
 
 ## build ignore
-use_build_ignore("^draft$", escape = FALSE)
-use_build_ignore("^start_pkg$", escape = FALSE)
-use_build_ignore(".travis.yml")
+usethis::use_build_ignore("^draft$", escape = FALSE)
+usethis::use_build_ignore("^start_pkg$", escape = FALSE)
+usethis::use_build_ignore(".travis.yml")
 
 ## Add DESCRIPTION
 usethis::use_description()
