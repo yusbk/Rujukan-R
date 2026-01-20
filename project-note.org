@@ -1,0 +1,256 @@
+#+title: Project structure
+
+* Layout
+
+Data structure is something like this:
+
+#+begin_example
+your-project/
+├─ data/
+│  ├─ raw/                # 2010.csv, 2011.csv, ..., 2025.csv
+│  └─ derived/            # master.parquet (built from raw)
+├─ R/
+│  ├─ etl.R               # ETL helpers (read, combine, clean)
+│  └─ analysis.R          # reusable analysis functions
+├─ report.qmd             # parameterized Quarto (mode = longitudinal/year)
+├─ build.R                # one-button annual build
+├─ _quarto.yml            # (optional) project config
+└─ renv/renv.lock         # (optional) reproducible environment
+#+end_example
+
+Recommended packages & why
+
+- data.table — fast IO and data ops: data.table::fread(), data.table::rbindlist(), data.table::fwrite().
+- highcharter — interactive charts in HTML reports.
+- gt — clean, publication-ready tables.
+- arrow or fst — store a fast preprocessed “master” file; I’ll show arrow but fst works similarly.
+- fs — file-system utilities (optional, but nice).
+- quarto — rendering engine (RStudio or CLI).
+- targets (optional) — for fully reproducible pipelines that only recompute what’s needed when a new file appears.
+- renv (optional) — lock dependencies for future years.
+
+* ETL
+
+Read files and make minimal cleaning to convert file to =parque=
+
+#+begin_src r :eval FALSE
+# R/etl.R
+utils::suppressPackageStartupMessages({
+  library(data.table)
+  library(arrow)   # or use fst
+  library(fs)      # optional
+})
+
+#' Read all year CSVs and build a master table
+#' Assumptions: each CSV has a 'year' column or year encoded in filename like 2010.csv
+#' Adjust parsing to your schema.
+build_master <- function(raw_dir = "data/raw", out_path = "data/derived/master.parquet") {
+  files <- fs::dir_ls(raw_dir, regexp = "\\.csv$", type = "file")
+  if (length(files) == 0L) stop("No CSV files found in ", raw_dir)
+
+  # Read all years
+  dts <- lapply(files, function(f) {
+    dt <- data.table::fread(f, encoding = "UTF-8")
+    # If year isn’t a column, infer from filename:
+    if (!("year" %in% names(dt))) {
+      yr <- as.integer(gsub("[^0-9]", "", fs::path_file(f)))
+      dt[, year := yr]
+    }
+    # Example: normalize date columns if any:
+    # if ("date" %in% names(dt)) dt[, date := as.IDate(date)]
+
+    dt
+  })
+
+  # Combine (handles schema drift via fill = TRUE)
+  master <- data.table::rbindlist(dts, use.names = TRUE, fill = TRUE)
+
+  # Minimal sanity checks (customize to your data)
+  if (!("year" %in% names(master))) stop("master is missing 'year'")
+  if (any(is.na(master$year))) stop("NA years detected")
+
+  # Example: derive some common fields (customize)
+  # master[, period := sprintf("%d", year)]
+
+  # Save as parquet for fast re-use
+  arrow::write_parquet(master, out_path)
+  invisible(out_path)
+}
+
+#' Load master (build if missing)
+load_master <- function(out_path = "data/derived/master.parquet", raw_dir = "data/raw") {
+  if (!fs::file_exists(out_path)) {
+    fs::dir_create(fs::path_dir(out_path))
+    build_master(raw_dir, out_path)
+  }
+  dt <- as.data.table(arrow::read_parquet(out_path))
+  data.table::setkey(dt, year)
+  dt
+}
+
+#+end_src
+
+* Report file
+
+This is the quarto file ie. qmd
+
+#+begin_src r :eval FALSE
+
+---
+title: "Annual & Longitudinal Report"
+format:
+  html:
+    toc: true
+    number-sections: true
+execute:
+  cache: true
+params:
+  mode: "both"   # "longitudinal" | "year" | "both"
+  year: 2025     # used when mode == "year" or "both"
+  master_path: "data/derived/master.parquet"
+---
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+utils::suppressPackageStartupMessages({
+  library(data.table)
+  library(highcharter)
+  library(gt)
+})
+
+source("R/etl.R")
+source("R/analysis.R")
+
+# Load (or build) master
+dt_all <- load_master(out_path = params$master_path, raw_dir = "data/raw")
+
+# Figure out latest year
+latest_year <- max(dt_all$year, na.rm = TRUE)
+
+# Create a year-specific dt (for params$year)
+yr <- as.integer(params$year)
+dt_year <- dt_all[year == yr]
+if (nrow(dt_year) == 0L) {
+  warning(sprintf("No rows for year = %d", yr))
+}
+
+#+end_src
+
+Data coverage: r min(dt_all$year) – r max(dt_all$year)
+Latest year detected: r latest_year
+This run's year param: r params$year (r params$mode)
+
+* Variables
+
+List of mandatory variables that should exist in all files.
+
+* Build file
+
+Use a file to run all ie. build.R
+
+#+begin_src r :eval FALSE
+
+# build.R
+utils::suppressPackageStartupMessages({
+  library(fs)
+  library(quarto)
+  library(arrow)
+  library(data.table)
+})
+
+source("R/etl.R")
+
+# Ensure master up to date (you can always force rebuild)
+master_path <- "data/derived/master.parquet"
+invisible(load_master(out_path = master_path, raw_dir = "data/raw"))
+
+# Inspect latest year from the master
+dt_all <- as.data.table(arrow::read_parquet(master_path))
+latest_year <- max(dt_all$year, na.rm = TRUE)
+
+# Output directory
+out_dir <- "_output"
+fs::dir_create(out_dir)
+
+# Render longitudinal
+quarto::quarto_render(
+  input = "report.qmd",
+  output_file = fs::path(out_dir, sprintf("report_longitudinal_%d.html", latest_year)),
+  execute_params = list(mode = "longitudinal", year = latest_year, master_path = master_path)
+)
+
+# Render specific year
+quarto::quarto_render(
+  input = "report.qmd",
+  output_file = fs::path(out_dir, sprintf("report_year_%d.html", latest_year)),
+  execute_params = list(mode = "year", year = latest_year, master_path = master_path)
+)
+
+message("Done. Reports in ", out_dir)
+
+#+end_src
+
+* With target
+
+This make the randering only necessary for new data using =_target.R=
+
+#+begin_src r :eval FALSE
+
+# _targets.R
+library(targets)
+library(data.table)
+library(arrow)
+library(quarto)
+
+source("R/etl.R")
+
+tar_option_set(packages = c("data.table", "arrow", "quarto"))
+
+list(
+  tar_target(
+    raw_files,
+    sort(Sys.glob("data/raw/*.csv")),
+    format = "file"
+  ),
+  tar_target(
+    master_path,
+    build_master(raw_dir = "data/raw", out_path = "data/derived/master.parquet"),
+    cue = tar_cue(mode = "always")
+  ),
+  tar_target(
+    longitudinal_report,
+    {
+      quarto::quarto_render(
+        input = "report.qmd",
+        output_file = "_output/report_longitudinal.html",
+        execute_params = list(mode = "longitudinal", year = 9999L, master_path = master_path)
+      )
+      "_output/report_longitudinal.html"
+    },
+    format = "file"
+  ),
+  tar_target(
+    year_report,
+    {
+      dt <- as.data.table(arrow::read_parquet(master_path))
+      latest <- max(dt$year, na.rm = TRUE)
+      quarto::quarto_render(
+        input = "report.qmd",
+        output_file = sprintf("_output/report_year_%d.html", latest),
+        execute_params = list(mode = "year", year = latest, master_path = master_path)
+      )
+      sprintf("_output/report_year_%d.html", latest)
+    },
+    format = "file"
+  )
+)
+
+#+end_src
+
+To run then use this command:
+
+#+begin_src r :eval FALSE
+targets::tar_make()
+#+end_src
