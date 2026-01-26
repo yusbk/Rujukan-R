@@ -115,6 +115,10 @@ usethis::use_test("Save_file")
 ## ---------
 library(pkgdown)
 
+## Logo must be located in 'man/figures/logo.png'
+## Create favicon and it will pick the logo file automatically if it's there
+pkgdown::create_favicon()
+
 # Run once to configure package to use pkgdown
 usethis::use_pkgdown()
 
