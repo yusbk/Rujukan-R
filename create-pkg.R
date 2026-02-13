@@ -1,3 +1,10 @@
+## ## Initialize Git Repository
+## git init
+## git add --all
+## git commit -m "first commit"
+## git remote add origin https://github.com/username/pkgname.git
+## git push origin master
+
 ## Package development
 ## -------------------
 ## OBS!! Make sure to run R from root package directory!
@@ -37,8 +44,6 @@ pkgdown::build_news(preview = TRUE)
 
 
 usethis::edit_r_buildignore()
-
-
 
 ## STEP 1
 ## Create package from start
@@ -115,25 +120,34 @@ usethis::use_test("Save_file")
 ## ---------
 library(pkgdown)
 
+# Run once to configure package to use pkgdown
+usethis::use_pkgdown()
+
+# 1) Add your hex
+usethis::use_logo("branding/your_hex.svg")  # copies to man/figures/logo.svg (and png if provided)
+
+# 2) README header (manually edit README.Rmd):
+#   <img src="man/figures/logo.png" align="right" height="160" />
+
+# 3) pkgdown setup
+usethis::use_pkgdown()
+
+# Edit _pkgdown.yml:
+# template:
+#   bootstrap: 5
+#   logo: man/figures/logo.png
+#   favicon: man/figures/favicon.png
+
+# Optional: generate favicons based on the logo
 ## Logo must be located in 'man/figures/logo.png'
 ## Create favicon and it will pick the logo file automatically if it's there
 pkgdown::create_favicon()
 
-# Run once to configure package to use pkgdown
-usethis::use_pkgdown()
-
-# Run to build the website
+# Build site
 pkgdown::build_site()
 
-
-
-## ## Initialize Git Repository
-## git init
-## git add --all
-## git commit -m "first commit"
-## git remote add origin https://github.com/username/pkgname.git
-## git push origin master
-
+# 4) Knit README
+devtools::build_readme()
 
 ## Travis CI setup
 ##-------------------
