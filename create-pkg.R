@@ -116,8 +116,8 @@ usethis::use_test("Files")
 usethis::use_test("Save_file")
 
 
-## Pkgdown
-## ---------
+## Pkgdown and logo
+## ----------------
 library(pkgdown)
 
 # Run once to configure package to use pkgdown
@@ -148,6 +148,13 @@ pkgdown::build_site()
 
 # 4) Knit README
 devtools::build_readme()
+
+# Add logo in vignettes and articles
+knitr::include_graphics(system.file("man", "figures", "logo.png", package = "yourpkg"))
+
+# Eller use relatively to knit inside the repo:
+knitr::include_graphics("man/figures/logo.png")
+
 
 ## Travis CI setup
 ##-------------------
