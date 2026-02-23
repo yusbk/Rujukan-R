@@ -112,7 +112,8 @@ usethis::use_github_links()
 
 ## Test
 ##-----
-usethis::use_test("Files")
+usethis::use_testthat() #to start using testthat and create the required folder and files
+usethis::use_test("make_file") #create test file for make_file
 usethis::use_test("Save_file")
 
 
