@@ -1,0 +1,125 @@
+#+title: Create website
+
+
+* Organizing
+The error is caused by the path separator in your articles contents. pkgdown
+expects just the vignette name (without the articles/ prefix) in the contents
+list — it already knows to look in the articles/ folder.
+
+#+begin_example
+articles:
+  - title: Building charts
+    navbar: ~
+    contents:
+      - specification            # ← correct
+
+  - title: Guides
+    navbar: Guides
+    contents:
+      - examples
+      - accessibility
+#+end_example
+
+No need to specify folder =articles=
+
+#+begin_example
+articles:
+  - title: Building charts
+    navbar: ~
+    contents:
+      - articles/specification   # ← wrong
+
+  - title: Guides
+    navbar: Guides
+    contents:
+      - articles/examples        # ← wrong
+      - articles/accessibility   # ← wrong
+#+end_example
+
+** Example of complete _pkgdown.yml
+
+#+begin_example
+url: https://github.com/folkehelsestats/highdir
+
+template:
+  bootstrap: 5
+  bootwatch: lumen
+  logo: man/figures/logo.png
+  favicon: man/figures/favicon.png
+
+navbar:
+  structure:
+    left: [start, reference, articles, news]
+    right: [search, github]
+  components:
+    start:
+      text: Quick start
+      href: articles/quick-start.html
+
+articles:
+  - title: Start
+    navbar:
+    contents:
+      - quick-start
+      - specification
+
+  - title: Guides
+    navbar: Guides
+    contents:
+      - examples
+      - accessibility
+
+news:
+  text: Updates
+  href: news/index.html
+
+
+reference:
+  - title: Primary functions
+    desc: >
+      Core functions used to generate figures.
+    contents:
+      - hd_spec
+      - hd_make
+  - title: Secondary functions
+    desc: >-
+      Additional optional functions that support workflows.
+    contents:
+      - hd_opts
+      - hd_save
+      - hd_app
+  - title: Backends
+    desc: >-
+      Backend engines used to build figures.
+    contents:
+      - list_backends
+      - register_backend
+  - title: Geoms
+    desc: >-
+      Geometric layers and related functions used to construct figures.
+    contents:
+      - list_geoms
+      - geom_args
+      - register_geom
+  - title: Themes
+    desc: >-
+      Theme functions defining the visual style of figures.
+    contents:
+      - hd_theme
+      - gg_theme
+      - hd_set_theme
+      - list_palettes
+      - get_palette
+      - register_palette
+  - title: JavaScript
+    desc: >-
+      JavaScript-related utilities (relevant for Highcharts output).
+    contents:
+      - hd_add_js
+  - title: Datasets
+    desc: >-
+      Example datasets
+    contents:
+      - alco1
+      - alco2
+#+end_example
