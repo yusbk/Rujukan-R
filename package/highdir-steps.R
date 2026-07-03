@@ -137,15 +137,16 @@ knitr::include_graphics("man/figures/logo.png")
 
 
 ### Github Action ---
-### Run Github Action first before codecov
-# ensure config in .git path is using
-## [remote "origin"]                                  ##
-## 	url = git@work:folkehelsestats/highdir        ## change to url = git@github.com:accoutname/repo
-## 	fetch = +refs/heads/*:refs/remotes/origin/*   ##
+## Run Github Action first before codecov using usethis::use_github_action()
+## ensure config in .git path is using this
+## [remote "origin"]                               ##
+##   url = git@work:folkehelsestats/highdir        ## change to url = git@github.com:accoutname/repo
+##   fetch = +refs/heads/*:refs/remotes/origin/*   ##
 
 usethis::use_github_action()
 
 ## Code coverage ------
+## Only do this after activating Github Action!
 ## Link the repo to codecov.io first
 ## After running the use_coverage, you get a url to be paste in README. Click the link to
 ## register the TOKEN to the Github and to link the two together. Just follow the instruction.
