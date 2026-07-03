@@ -143,16 +143,17 @@ knitr::include_graphics("man/figures/logo.png")
 ##   url = git@work:folkehelsestats/highdir        ## change to url = git@github.com:accoutname/repo
 ##   fetch = +refs/heads/*:refs/remotes/origin/*   ##
 
-usethis::use_github_action()
+usethis::use_github_action("check-standard")
 
 ## Code coverage ------
 ## Only do this after activating Github Action!
 ## Link the repo to codecov.io first
 ## After running the use_coverage, you get a url to be paste in README. Click the link to
 ## register the TOKEN to the Github and to link the two together. Just follow the instruction.
-library(usethis)
-use_coverage(type = c("codecov"))
 
+usethis::use_github_action("test-coverage")
+# or with this command, you can choose the type of coverage service (codecov or coveralls)
+usethis::use_coverage(type = c("codecov"))
 
 ## CRAN submission
 ## -----------------------------------------------------------------------------
